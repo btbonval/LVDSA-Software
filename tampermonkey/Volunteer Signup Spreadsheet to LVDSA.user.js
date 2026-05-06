@@ -1,8 +1,14 @@
 // ==UserScript==
 // @name         Volunteer Signup Spreadsheet to LVDSA
-// @namespace    http://tampermonkey.net/
+// @namespace    https://raw.githubusercontent.com/btbonval/LVDSA-Software/
 // @version      2026-05-06
 // @description  Reads Google Spreadsheet data, pushes entries into the correct LVDSA form.
+// @homepage     https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
+// @homepageURL  https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
+// @website      https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
+// @source       https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
+// @updateURL    https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
+// @downloadURL  https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
 // @author       Bryan Bonvallet
 // @match        https://docs.google.com/spreadsheets/d/1R1xD7_nopZWBWex4b0MWhAwT_RZ5tPFl7tIASj7gQaM/*
 // @match        https://lvdsa.org/events/*

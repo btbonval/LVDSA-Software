@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Volunteer Signup Spreadsheet to LVDSA
 // @namespace    https://raw.githubusercontent.com/btbonval/LVDSA-Software/
-// @version      2026-05-06
+// @version      2026-05-07
 // @description  Reads Google Spreadsheet data, pushes entries into the correct LVDSA form.
 // @homepage     https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
 // @homepageURL  https://raw.githubusercontent.com/btbonval/LVDSA-Software/refs/heads/main/tampermonkey/Volunteer%20Signup%20Spreadsheet%20to%20LVDSA.user.js
@@ -388,6 +388,8 @@ function populate_data_into_form(query_params, attempts) {
         console.log(parameters);
         target.value = parameters.get(data_key);
     }
+    // presumably all values have been populated, let's try to submit.
+    setTimeout(_ => unsafeWindow.document.querySelector('div#form_col2 > input').click(), 50);
 }
 
 (function() {

@@ -1,6 +1,8 @@
 # Run:
 # python scraper.py
 
+# Where to find Slack App to configure it for other channels, etc: https://api.slack.com/apps
+
 # https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/
 
 import re
@@ -23,17 +25,17 @@ with open('cache.json','r') as jsonfile:
 # regular expressions to seek in the document
 # compile them case-insensitive as part of a list comprehension
 expressions = [re.compile(x, re.I) for x in [
-    r'security',
-    r'camera',
+    r'data center',
+    r'artificial intelligence',
+    r' AI ',
     r' flock ',
     r'surveillance',
-    r' AI ',
     r'automated',
-    r'artificial intelligence',
+    r'security',
+    r'camera',
 ]]
 
 def error_handler(text):
-    # TODO message errors to Slack
     print(text)
     sys.exit(1)
 

@@ -13,6 +13,9 @@ import pypdf
 import requests
 import tempfile
 
+# Set this to True to print to STDOUT for dev purposes rather than submit to Slack Webhooks
+LOCAL_DEBUG=False
+
 SOURCES = [
     {"name": "City of Las Vegas",
      "url": "https://lasvegas.primegov.com/api/v2/PublicPortal/ListUpcomingMeetings",
@@ -30,16 +33,19 @@ with open('cache.json', 'r') as jsonfile:
 
 CATEGORIES = {
     "no_more_data_centers": [
-        r'data\s+center',
-        r'artificial\s+intelligence',
-        r'\bAI\b',
-        r'\bflock\b',
+        r'data center',
+        r'artificial intelligence',
+        r'AI',
+        r'flock',
         r'surveillance',
         r'automated',
         r'security',
         r'camera',
         r'axon',
     ],
+    # TODO will this search the same PDF for the same keywords twice if they're also above?
+    # if yes, keep this dict readable but run it through a function that flips the dict to be
+    # `keyword: ['no_more_data_centers', 'abolish_ice']` if both apply, etc
     "abolish_ice": [
         r'surveillance',
         r'security',
@@ -47,7 +53,12 @@ CATEGORIES = {
 }
 
 PATTERNS = {
-    name: [re.compile(p, re.I) for p in pats]
+    # for each keyword, build a list of [keyword, regex pattern] where
+    # the first part is the human readable keyword/keyphrase and
+    # the second part is a compiled regular expression to find the keyword.
+    # apply '\b' to the front and back of every pattern for word boundaries.
+    # replace any space with `\s+` for one or more whitespaces including line breaks.
+    name: [[p, re.compile(r'\b' + p.replace(' ',r'\s+') + r'\b', re.I)] for p in pats]
     for name, pats in CATEGORIES.items()
 }
 
@@ -109,38 +120,48 @@ for i in SOURCES:
                 page = p.extract_text() or ""
                 for name, pats in PATTERNS.items():
                     for pat in pats:
-                        if pat.search(page) is not None:
-                            keywords.setdefault(name, set()).add(pat.pattern)
+                        # break out the readable first item from the regex pattern second item.
+                        readable, pattern = pat
+                        if pattern.search(page) is not None:
+                            keywords.setdefault(name, set()).add(readable)
 
         # track whether a document was posted only once,
         # even if it was posted as a comment to multiple webhooks.
         posted = False
 
+        # TODO refactor copy/paste between the two if-blocks into a function
         if keywords.get("no_more_data_centers"):
             message = f"""Found keyword(s) in a City of Las Vegas agenda.
-Found words: {sorted(keywords["no_more_data_centers"])}
+Found words: {", ".join(sorted(keywords["no_more_data_centers"]))}
 Document title: {str(title)}
 Document URL: {str(doc_url)}
 """
-            r = requests.post(SECRETS["NMDC_WEBHOOK"], data=json.dumps({"text": message}))
-            if r.status_code != 200:
-                print("Error posting to slack:")
-                print(r.content)
-                sys.exit(1)
+
+            if LOCAL_DEBUG:
+                print("NMDC ", message)
+            else:
+                r = requests.post(SECRETS["NMDC_WEBHOOK"], data=json.dumps({"text": message}))
+                if r.status_code != 200:
+                    print("Error posting to slack:")
+                    print(r.content)
+                    sys.exit(1)
             stats["comments posted"] += 1
             posted = True
 
         if keywords.get("abolish_ice"):
             message = f"""Found keyword(s) in a City of Las Vegas agenda.
-Found words: {sorted(keywords["abolish_ice"])}
+Found words: {", ".join(sorted(keywords["abolish_ice"]))}
 Document title: {str(title)}
 Document URL: {str(doc_url)}
 """
-            r = requests.post(SECRETS["ABOLISH_WEBHOOK"], data=json.dumps({"text": message}))
-            if r.status_code != 200:
-                print("Error posting to slack:")
-                print(r.content)
-            sys.exit(1)
+            if LOCAL_DEBUG:
+                print("Abolish ", message)
+            else:
+                r = requests.post(SECRETS["ABOLISH_WEBHOOK"], data=json.dumps({"text": message}))
+                if r.status_code != 200:
+                    print("Error posting to slack:")
+                    print(r.content)
+                    sys.exit(1)
             stats["comments posted"] += 1
             posted = True
 

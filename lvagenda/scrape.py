@@ -123,7 +123,6 @@ Document title: {str(title)}
 Document URL: {str(doc_url)}
 """
             r = requests.post(SECRETS["NMDC_WEBHOOK"], data=json.dumps({"text": message}))
-            r = requests.post(SECRETS["ADMIN_WEBHOOK"], data=json.dumps({"text": message}))
             if r.status_code != 200:
                 print("Error posting to slack:")
                 print(r.content)
@@ -138,7 +137,6 @@ Document title: {str(title)}
 Document URL: {str(doc_url)}
 """
             r = requests.post(SECRETS["ABOLISH_WEBHOOK"], data=json.dumps({"text": message}))
-            r = requests.post(SECRETS["ADMIN_WEBHOOK"], data=json.dumps({"text": message}))
             if r.status_code != 200:
                 print("Error posting to slack:")
                 print(r.content)
